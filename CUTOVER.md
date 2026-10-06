@@ -1,111 +1,70 @@
-# Cutover: `brandpdf` → `lumenpdf`
+# Fibersoft app rename
 
-The app's internal id is **`lumenpdf`**. Everything users see was already "LumenPDF Studio";
-this aligned the technical id, the DocType names, the desk route, and the asset paths.
+The application is now **Fibersoft PDF Studio**, with Python package/app id
+`fibersoft`, module `Fibersoft`, and **Print with Fibersoft** buttons.
 
-The cutover is finished. No site runs the old `brandpdf` id any more, and the `master` branch
-that carried it has been retired. Its last commit is kept as the tag `legacy/brandpdf-final`,
-so the old id is still readable if it is ever needed. The rest of this file is the history of
-how that was done, kept because the one rule below is still true for anyone renaming an app.
+## Install the renamed application
 
-## ⚠ The one rule
+Use the checkout containing these changes on a fresh Frappe site:
 
-**Never point an existing site's bench at the renamed code and hit Migrate.** Frappe registers
-an app by its id; renamed code + an old registration = `ModuleNotFoundError: No module named
-'brandpdf'`, which wedges *every* bench command (this is exactly what took the site down on
-6 July). The rename is safe only as a **fresh install of the new id**.
-
-That is why the two ids lived on separate branches while the cutover was in progress.
-
----
-
-## A. New customers / marketplace (nothing special)
-
-Register the repo on branch **`lumenpdf`**. They install a brand-new app:
-
-```bash
-bench get-app https://github.com/ma7mod7osam/LumenPDF-Studio --branch lumenpdf
-bench --site <site> install-app lumenpdf
-bench --site <site> migrate
+```sh
+bench get-app fibersoft https://github.com/Faizan-Sab/Fibersoft-PDF-Studio.git --branch main
+bench --site <new-site> install-app fibersoft
+bench --site <new-site> migrate
+bench --site <new-site> execute fibersoft.setup.install_config.check_config
 ```
 
-No legacy anything. This is the path the marketplace listing should use.
+The builder is `/app/fibersoft-builder`; the print page is `/app/fibersoft-print`.
+Assets live under `/assets/fibersoft/`. The site creates Fibersoft Settings, Block,
+Template, Snippet, Mapping Condition, Mapping and AI Settings DocTypes.
 
----
+## Move an existing installation
 
-## B. Your existing site (TemTemTech) — one-time migration
+**Do not replace an installed `lumenpdf` package with this renamed package and run
+migrate.** Frappe stores installed app names, and an old registration with a missing
+Python package can stop Bench commands with `ModuleNotFoundError`.
 
-The old and new apps use **different DocType names** (`BrandPDF Template` →
-`LumenPDF Template`), so saved formats do not carry over automatically. Export first.
+1. Keep the original checkout available to the original site. Back up its database,
+   uploaded files and configuration before making installation changes.
+2. Export saved document and report formats from the original builder using
+   **File > Export as .json**. Record per-company settings, mapping priorities,
+   conditions, enabled toggles, report defaults and saved snippets. Format export
+   contains the format definition, not all these separate records.
+3. Install `fibersoft` on a fresh site using the renamed checkout above. The rename
+   does not automatically migrate the old DocType records or app registration.
+4. Transfer the site's business data and uploaded files using your normal site
+   migration process. Restore company branding, import formats with
+   **File > Import from .json**, and recreate defaults, mappings and snippets.
+5. Set your Gemini key/model in **Fibersoft AI Settings**. Configure your real
+   support address as `fibersoft_feedback_email` if you use builder feedback.
+6. Check a document print, a report print, PDF download, email attachment and the
+   native print override on the new site before switching users to it.
 
-**Do this on a quiet moment; budget ~30 minutes. Take a site backup first.**
+The original site remains the fallback until the new site is verified. This local
+source change does not run site migrations, uninstall apps, or alter any database.
 
-### 1. Export what you want to keep
-- Open the builder (`/app/brandpdf-builder`) → **File → Open / manage formats**.
-- For **each** format you want to keep: Open it → **File → Export as .json** → save the file.
-- Note down your **BrandPDF Settings** values per company (primary/secondary colour, font,
-  header/footer banner image paths, footer registration text). A screenshot is enough.
-- Note which format is the **default** for each doctype/company, and any report mappings.
-- Your saved "My blocks" snippets are **not** exportable — note the few you care about and
-  rebuild them after (they take seconds).
+## Configuration and browser preferences
 
-Uploaded images (`/files/...`) are untouched by all of this — banners and product photos stay.
+New site configuration uses `fibersoft_*`. Engine and Gemini settings also read
+previous `lumenpdf_*` and `brandpdf_*` keys as fallbacks; the new key takes priority.
+Feedback uses only an explicitly configured `fibersoft_feedback_email`, so the
+rebranded app does not send feedback to the original publisher by default.
 
-### 2. Swap the app
-On Frappe Cloud: Bench → Apps → **remove** `brandpdf`, then **Add App** from the repo on branch
-`lumenpdf`, then **Deploy**, then install `lumenpdf` on the site.
+When opened at the same browser origin, the builder copies the old draft and panel
+preferences into `fibersoft_*` localStorage keys and removes the old keys after a
+successful transfer. A draft does not move automatically to a different origin.
 
-Via bench:
-```bash
-bench --site <site> uninstall-app brandpdf     # asks for confirmation; drops its DocTypes
-bench get-app https://github.com/ma7mod7osam/LumenPDF-Studio --branch lumenpdf
-bench --site <site> install-app lumenpdf
-bench --site <site> migrate
-```
+## Source and attribution
 
-### 3. Restore
-- Open `/app/lumenpdf-builder`.
-- **LumenPDF Settings** → recreate the row(s) with the branding you noted.
-- For each exported file: **File → Import from .json** → **✓ Save**.
-- Re-set the defaults per doctype/company in **File → Open / manage formats**, and re-map
-  reports (Save on a report format auto-activates it).
-- Rebuild any block snippets.
+The Fibersoft source repository is
+[Faizan-Sab/Fibersoft-PDF-Studio](https://github.com/Faizan-Sab/Fibersoft-PDF-Studio),
+with `main` as its installation branch. A local app rename does not rename an
+upstream repository or branch. CI checks renamed installations on pushes to any branch.
 
-### 4. Verify
-- Print one quotation with **Download Branded PDF** → compare to a PDF from before.
-- Open a report → the **Branded PDF** button → check landscape still works.
-- `/api/method/lumenpdf.api.engine_diag` should report the engine as before.
+Original copyright, SPDX identifiers, licence and trademark notices remain as
+source attribution. Bundled screenshots are historical references; capture new
+Fibersoft screenshots before publishing a marketplace listing.
 
-### Rollback
-If anything goes wrong: uninstall `lumenpdf`, re-add the app from the tag
-**`legacy/brandpdf-final`** (still
-`brandpdf`), install, migrate, re-import the same JSON files. Your exports work in either app —
-the definition format is identical.
-
----
-
-## What changed under the hood
-
-| Before | After |
-|---|---|
-| app id `brandpdf` | `lumenpdf` |
-| module `BrandPDF` | `LumenPDF` |
-| DocTypes `BrandPDF Template/Settings/Mapping/Block/Snippet/...` | `LumenPDF ...` |
-| desk route `/app/brandpdf-builder` | `/app/lumenpdf-builder` |
-| assets `/assets/brandpdf/...` | `/assets/lumenpdf/...` |
-| whitelisted methods `brandpdf.api.*` | `lumenpdf.api.*` |
-| site_config `brandpdf_engine`, `brandpdf_chromium_path`, `brandpdf_feedback_email` | `lumenpdf_*` — **legacy keys still read** as a fallback, so you don't have to edit site_config |
-
-Format definition JSON is unchanged, which is why export/import works across the rename.
-
----
-
-## Branches
-
-- **`lumenpdf`** is the default branch and the one the v14 and v15 marketplace listing builds
-  from. All work lands here.
-- **`version-16`** carries the same app with its own CI, because the marketplace serves v16
-  from a separate source. Keep it in step with a merge, never a second edit: the two branches
-  differ only in the workflow file and one README note.
-- **`legacy/brandpdf-final`** is a tag, not a branch. It is the last commit of the retired
-  `master`, the only place the old `brandpdf` id still exists.
+The previous cutover from `brandpdf` to `lumenpdf` is repository history. The
+upstream tag `legacy/brandpdf-final` identifies the earlier implementation; it is
+not a rollback procedure for the new Fibersoft installation.

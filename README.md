@@ -1,4 +1,4 @@
-# LumenPDF Studio
+# Fibersoft PDF Studio
 
 **A visual print-format builder for Frappe / ERPNext v14, v15 and v16.** Design pixel-perfect, branded PDFs
 for your documents *and* your reports, with drag-and-drop blocks, ready-made templates, live
@@ -15,13 +15,13 @@ preview, and zero code.
 
 Frappe's stock print formats make beautiful branded output hard: full-bleed banners, exact
 margins, repeating headers/footers with real page numbers, background colors that actually
-print, and clean RTL/Arabic all fight the default PDF pipeline. LumenPDF Studio renders through
+print, and clean RTL/Arabic all fight the default PDF pipeline. Fibersoft PDF Studio renders through
 the host's own Chromium PDF generator (with automatic engine fallbacks), so what you design is
 what prints.
 
 ## Highlights
 
-- **Visual builder** (`/app/lumenpdf-builder`): drag blocks onto an A4 canvas, headings, text,
+- **Visual builder** (`/app/fibersoft-builder`): drag blocks onto an A4 canvas, headings, text,
   bound document fields, images, dividers, boxes, multi-column rows, custom tables, page
   numbers, plus smart blocks for items, totals, taxes, payment schedule, customer, terms and
   signature. Undo/redo, autosave drafts, inline editing, zoom, full-screen, dark mode.
@@ -35,7 +35,7 @@ what prints.
 - **Product-catalog documents**: per-item **product photos** in the items table, pulled from
   each row's Image attachment, sized how you want. A row without a photo, a service line, gets
   no empty box.
-- **Branding that scales**: per-company colors, fonts and banner images (LumenPDF Settings), with
+- **Branding that scales**: per-company colors, fonts and banner images (Fibersoft Settings), with
   per-format overrides and opt-outs. Bilingual EN/AR out of the box: a document picks a Latin
   font AND an Arabic font, so Arabic prints in the face you chose instead of the server's
   fallback. 16 Arabic Google fonts, naskh and modern sans, plus RTL-aware blocks.
@@ -43,7 +43,7 @@ what prints.
   fields (e.g. the customer's email on a Sales Invoice), any child table as a styled data table,
   conditional block visibility, conditional watermarks (e.g. status = Paid → "PAID"),
   amount-in-words.
-- **A print screen of your own**: every document gets a **Print with LumenPDF** button that
+- **A print screen of your own**: every document gets a **Print with Fibersoft** button that
   opens your formats side by side. Pick one, see the actual PDF (not an approximation of it),
   then print it, download it, or email it with the file already attached to ERPNext's own
   email window. ERPNext's print view stays one click away, untouched. A document already
@@ -87,10 +87,13 @@ what prints.
 ## Install
 
 ```bash
-bench get-app https://github.com/ma7mod7osam/LumenPDF-Studio --branch lumenpdf
-bench --site <your-site> install-app lumenpdf
+bench get-app fibersoft https://github.com/Faizan-Sab/Fibersoft-PDF-Studio.git --branch main
+bench --site <your-site> install-app fibersoft
 bench --site <your-site> migrate
 ```
+
+Install the Fibersoft app on a fresh site; see
+[CUTOVER.md](CUTOVER.md) before moving an existing installation to the new app id.
 
 The app configures itself on install and on every migrate (its config DocTypes are created automatically; a starter
 Quotation format is seeded on ERPNext sites). On Frappe Cloud, add the app to your bench and
@@ -98,14 +101,14 @@ deploy.
 
 ## Quick start
 
-1. Open **LumenPDF Studio** (`/app/lumenpdf-builder`) as a System Manager.
+1. Open **Fibersoft PDF Studio** (`/app/fibersoft-builder`) as a System Manager.
 2. Pick a target: a **Document** type (Quotation, Sales Invoice, …) or a **Report**.
 3. Start from **Templates** or a blank canvas, then drag blocks, bind fields and style everything.
-4. **Save**, then print: the document's **Print with LumenPDF** button, the report's
+4. **Save**, then print: the document's **Print with Fibersoft** button, the report's
    **Branded PDF** button, or, if you enable it for that doctype, the native **Print PDF** itself.
 5. Manage defaults per doctype/company in **File → Open / manage formats**.
 
-Company-wide branding (colors, fonts, header/footer banner images) lives in **LumenPDF
+Company-wide branding (colors, fonts, header/footer banner images) lives in **Fibersoft
 Settings**, one row per company. Formats inherit it and can override or suppress it.
 
 ## PDF engines
@@ -114,10 +117,13 @@ Settings**, one row per company. Formats inherit it and can override or suppress
 |---|---|---|
 | `frappe_chrome` (default) | Always available | Reuses the host's own Chromium PDF generator; zero setup. |
 | wkhtmltopdf fallback | Automatic | Used when the host's chrome generator can't produce landscape pages, detected and cached automatically. |
-| `playwright` / `gotenberg` | Opt-in | Set `lumenpdf_engine` in site_config; install the matching optional dependency (`pip install lumenpdf[playwright]`). |
+| `playwright` / `gotenberg` | Opt-in | Set `fibersoft_engine` in site_config; install the matching optional dependency (`pip install fibersoft[playwright]`). |
 
-Diagnostics: `/api/method/lumenpdf.api.engine_diag` (System Manager) reports how the active
+Diagnostics: `/api/method/fibersoft.api.engine_diag` (System Manager) reports how the active
 engine treats margins, full-bleed and landscape.
+
+Builder feedback needs a recipient configured in `fibersoft_feedback_email` in
+`site_config.json`. Set it to your team's real support address.
 
 ## Security posture
 

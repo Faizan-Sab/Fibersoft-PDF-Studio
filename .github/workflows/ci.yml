@@ -1,11 +1,11 @@
 # Copyright (c) 2026 Lumen Solutions (BSTC W.L.L). All rights reserved.
-# CI: install LumenPDF Studio on a real bench for every Frappe version the
+# CI: install Fibersoft PDF Studio on a real bench for every Frappe version the
 # marketplace listing covers, run migrate, and smoke-test the config spine.
 name: CI
 
 on:
   push:
-    branches: [lumenpdf]
+    branches: ["**"]
   pull_request:
   workflow_dispatch:
 
@@ -78,7 +78,7 @@ jobs:
 
       - name: Get app (builds assets too)
         working-directory: frappe-bench
-        run: bench get-app lumenpdf "$GITHUB_WORKSPACE/app"
+        run: bench get-app fibersoft "$GITHUB_WORKSPACE/app"
 
       - name: Create site and install app
         working-directory: frappe-bench
@@ -86,11 +86,11 @@ jobs:
           bench new-site test.localhost \
             --db-root-password root --admin-password admin \
             --mariadb-user-host-login-scope=%
-          bench --site test.localhost install-app lumenpdf
+          bench --site test.localhost install-app fibersoft
 
       - name: Fresh-install config must be complete (before any migrate)
         working-directory: frappe-bench
-        run: bench --site test.localhost execute lumenpdf.setup.install_config.check_config
+        run: bench --site test.localhost execute fibersoft.setup.install_config.check_config
 
       - name: Migrate
         working-directory: frappe-bench
@@ -98,21 +98,21 @@ jobs:
 
       - name: Config still complete after migrate
         working-directory: frappe-bench
-        run: bench --site test.localhost execute lumenpdf.setup.install_config.check_config
+        run: bench --site test.localhost execute fibersoft.setup.install_config.check_config
 
       # A format that prints wrong does not raise anything, it just looks wrong on paper, so
       # the only way to keep it out of a release is to read every saved format on the way past.
       - name: Formats must be printable
         working-directory: frappe-bench
         run: |
-          bench --site test.localhost execute lumenpdf.lint.check_all --kwargs "{'strict': True}"
+          bench --site test.localhost execute fibersoft.lint.check_all --kwargs "{'strict': True}"
 
       - name: Smoke tests
         working-directory: frappe-bench
         run: |
           # after_install must have created the whole config spine; re-running is a no-op
-          bench --site test.localhost execute lumenpdf.setup.install_config.ensure_config
-          bench --site test.localhost execute lumenpdf.compose.clear_probe_cache
+          bench --site test.localhost execute fibersoft.setup.install_config.ensure_config
+          bench --site test.localhost execute fibersoft.compose.clear_probe_cache
           # every module of the app must byte-compile on this Python
-          ./env/bin/python -m compileall -q apps/lumenpdf/lumenpdf
+          ./env/bin/python -m compileall -q apps/fibersoft/fibersoft
           bench --site test.localhost list-apps

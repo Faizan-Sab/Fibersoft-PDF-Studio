@@ -1,0 +1,29 @@
+# Copyright (c) 2026 Lumen Solutions (BSTC W.L.L). All rights reserved.
+# SPDX-License-Identifier: LicenseRef-Lumen-Proprietary
+# Proprietary and confidential. See license.txt. "LumenPDF" and "LumenPDF Studio" are
+# trademarks of Lumen Solutions.
+"""Site-level configuration with safe defaults. Override in site_config.json."""
+import frappe
+
+DEFAULTS = {
+    # frappe_chrome = reuse the HOST's own PDF pipeline (always present on any Frappe site; the
+    # engine self-probe adapts to whatever generator is active). This makes a fresh install work
+    # with ZERO site_config keys — playwright/gotenberg are opt-in overrides for advanced setups.
+    "engine": "frappe_chrome",                   # "frappe_chrome" | "playwright" | "gotenberg"
+    "chromium_path": None,                       # explicit chromium binary for Playwright (optional)
+    "render_url": "http://localhost:3000",       # Gotenberg base URL
+    "page_format": "A4",
+    "render_timeout": 120,                        # seconds, background job
+}
+
+
+def conf(key):
+    """Read fibersoft_<key> from site_config.json, falling back to DEFAULTS.
+    Also honors the legacy lumenpdf_<key> and brandpdf_<key> spellings so migrated sites keep
+    their engine/chromium overrides working without editing site_config."""
+    val = frappe.conf.get(f"fibersoft_{key}")
+    if val is None:
+        val = frappe.conf.get(f"lumenpdf_{key}")  # previous app's site configuration
+    if val is None:
+        val = frappe.conf.get(f"brandpdf_{key}")  # legacy (pre-rename) key
+    return DEFAULTS.get(key) if val is None else val

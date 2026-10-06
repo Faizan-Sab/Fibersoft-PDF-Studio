@@ -1,0 +1,60 @@
+# Copyright (c) 2026 Lumen Solutions (BSTC W.L.L). All rights reserved.
+# SPDX-License-Identifier: LicenseRef-Lumen-Proprietary
+# Proprietary and confidential. See license.txt. "LumenPDF" and "LumenPDF Studio" are
+# trademarks of Lumen Solutions.
+"""Resolve a document -> branded HTML.
+
+Branding + template are resolved via `fibersoft.resolver`. A template can be:
+  - a Jinja file (the shipped quotation), or a DB Jinja body, or
+  - a BLOCK format (source_type="blocks") assembled by `fibersoft.blocks` — the no-code maker.
+Falls back to Phase-1 defaults when the config DocTypes don't exist yet.
+"""
+import os
+
+import frappe
+from frappe.utils.html_utils import sanitize_html
+
+from fibersoft import assets
+from fibersoft.defaults import DEFAULT_BRANDING, TEMPLATE_MAP  # noqa: F401 (re-export)
+
+
+def render_html(doc, kind=None, value=None) -> str:
+    from fibersoft import resolver  # lazy import: resolver imports defaults, not this module
+
+    branding = resolver.resolve_branding(doc)
+    terms_raw = doc.get("terms")
+    terms_html = sanitize_html(terms_raw) if terms_raw else ""
+
+    if kind is None:  # caller may pass an explicit chosen template (kind, value); else resolve
+        kind, value = resolver.resolve_template(doc)
+    allowed = {branding.get("header_image"), branding.get("footer_image")}
+    if kind == "blocks":
+        from fibersoft import blocks as blocks_mod
+        tmpl = frappe.get_doc("Fibersoft Template", value)
+        definition = tmpl.get("definition")
+        if definition:
+            # The visual builder's saved design — render it exactly as previewed.
+            html = blocks_mod.render_definition(doc, definition, terms_html)
+            allowed |= blocks_mod.collect_image_srcs(definition)
+            allowed |= blocks_mod.collect_doc_image_srcs(doc, definition)  # per-item photos
+        else:
+            html = blocks_mod.render_blocks(doc, branding, tmpl.get("blocks"), terms_html)
+    else:
+        # A "body" template is raw Jinja authored ONLY by System Manager (trusted, review #1).
+        src = _read_template(value) if kind == "file" else value
+        # Trusted input: "body" templates can only be created or edited by System Managers (DocType
+        # permissions) and "file" templates ship inside this app, so src is never end-user controlled.
+        html = frappe.render_template(src, {"doc": doc, "branding": branding, "terms_html": terms_html})  # nosemgrep
+
+    html = assets.inline_images(html, allowed={a for a in allowed if a})
+    return assets.neutralize_remote(html)  # block remaining server-side fetches (SSRF defense)
+
+
+def _read_template(relpath: str) -> str:
+    base = os.path.realpath(frappe.get_app_path("fibersoft", "templates"))
+    full = os.path.realpath(frappe.get_app_path("fibersoft", *relpath.split("/")))
+    if not (full == base or full.startswith(base + os.sep)):
+        frappe.throw("Invalid Fibersoft template path.")
+    # Safe: `full` was realpath-checked above to sit inside this app's templates directory.
+    with open(full, encoding="utf-8") as fh:  # nosemgrep
+        return fh.read()
