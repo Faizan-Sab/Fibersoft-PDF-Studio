@@ -1,0 +1,131 @@
+LumenPDF Studio - Software Licence Agreement
+
+Copyright (c) 2026 Lumen Solutions (BSTC W.L.L). All rights reserved.
+
+This software is proprietary and confidential. It is licensed, not sold.
+
+IMPORTANT: This is NOT open-source software. The source code is readable because
+Frappe applications are distributed and executed as source. Readability does not
+grant you any right to copy, redistribute or resell it.
+
+
+LICENCE HISTORY
+
+LumenPDF Studio was released under the MIT licence up to and including the release
+tagged v1.4.0. That grant cannot be, and is not, revoked: any copy obtained
+under MIT remains under MIT for its recipient, permanently.
+
+For a short period on 2026-09-13, two commits (`cbb0be5` on the `master` branch
+and `6bb1bc2` on the `lumenpdf` branch) were published under the GNU Affero
+General Public License v3.0. Anyone who obtained the software during that
+window keeps their AGPL-3.0 rights for that copy; that grant is likewise not
+revoked.
+
+From the next release onwards, LumenPDF Studio is licensed under this proprietary
+agreement. The change applies to new releases only.
+
+
+1. DEFINITIONS
+
+   "Software" means the LumenPDF Studio application, including its source code,
+   compiled assets, documentation and any updates supplied to you.
+
+   "Licensor" means Lumen Solutions.
+
+   "Licensee" / "you" means the individual or organisation using the Software.
+
+
+2. GRANT OF LICENCE
+
+   The Licensor grants you a non-exclusive, non-transferable, non-sublicensable,
+   revocable, free-of-charge licence to:
+
+   (a) install and run the Software on any Frappe site you control;
+   (b) use the Software for your own internal business purposes; and
+   (c) modify the Software for use on your own sites, provided the modified
+       version is never distributed to any third party and remains subject to
+       this agreement.
+
+   You may keep reasonable backup copies for disaster recovery.
+
+
+3. RESTRICTIONS
+
+   You may NOT:
+
+   (a) copy, publish, distribute, sublicense, rent, lease, lend, sell or
+       otherwise make the Software available to any third party, in original or
+       modified form, in whole or in part;
+   (b) use the Software, or any part of it, to build, train or offer a competing
+       product or service;
+   (c) remove, obscure or alter any copyright, licence or attribution notice;
+   (d) use the names "LumenPDF" or "LumenPDF Studio", or the LumenPDF logo, for
+       your own product, fork, company, domain or marketplace listing (see
+       TRADEMARKS.md); or
+   (e) reverse engineer the Software in order to evade this agreement. (Nothing
+       in this clause restricts rights you have under applicable law that cannot
+       be excluded by contract.)
+
+
+4. OWNERSHIP AND CONFIDENTIALITY
+
+   The Software is licensed, not sold. The Licensor retains all right, title and
+   interest in it, including all intellectual property rights. You acquire no
+   rights other than those expressly granted here.
+
+   The source code is confidential information of the Licensor. You must protect
+   it with at least the care you apply to your own confidential information, and
+   must restrict access to those of your personnel who need it to operate the
+   Software.
+
+   Any modification you make under clause 2(c) remains subject to this agreement.
+
+
+5. THIRD-PARTY COMPONENTS
+
+   The Software incorporates third-party open-source components, each governed by
+   its own licence. Those licences continue to apply to those components and
+   nothing in this agreement restricts your rights under them. This agreement
+   governs the Software as a whole and the Licensor's own original code.
+
+
+6. TERM AND TERMINATION
+
+   This licence runs for as long as you comply with it. It terminates
+   automatically if you materially breach it. On termination you must stop using
+   the Software and remove it from all sites, save that copies retained in
+   routine backups may remain until those backups expire in the ordinary course.
+
+   Clauses 3, 4, 7 and 8 survive termination.
+
+
+7. NO WARRANTY
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. THE LICENSOR DOES NOT
+   WARRANT THAT THE SOFTWARE WILL BE UNINTERRUPTED OR ERROR-FREE.
+
+
+8. LIMITATION OF LIABILITY
+
+   TO THE FULLEST EXTENT PERMITTED BY LAW, THE LICENSOR SHALL NOT BE LIABLE FOR
+   ANY INDIRECT, INCIDENTAL, SPECIAL OR CONSEQUENTIAL DAMAGES, NOR FOR LOST
+   PROFITS, LOST REVENUE, LOST DATA OR BUSINESS INTERRUPTION, ARISING OUT OF OR
+   RELATING TO THE SOFTWARE.
+
+   Nothing here limits liability that cannot lawfully be limited.
+
+
+9. GOVERNING LAW
+
+   This agreement is governed by the laws of the Kingdom of Bahrain, and the
+   courts of the Kingdom of Bahrain have exclusive jurisdiction over any dispute
+   arising from it.
+
+
+10. CONTACT
+
+    Lumen Solutions
+    https://lumen-solutions.co
+    hello@lumen-solutions.co

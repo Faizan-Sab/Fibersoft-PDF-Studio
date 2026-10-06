@@ -1,0 +1,29 @@
+[project]
+name = "lumenpdf"
+authors = [
+    { name = "Lumen Solutions", email = "hello@lumen-solutions.co" },
+]
+description = "LumenPDF Studio — a visual print-format builder for Frappe/Fibersoft: pixel-perfect branded PDFs for documents and reports, with ready-made templates."
+requires-python = ">=3.10"
+readme = "README.md"
+license = { file = "license.txt" }
+classifiers = ["License :: Other/Proprietary License"]
+dynamic = ["version"]
+# No hard dependencies: the default engine (frappe_chrome) reuses the host's own PDF pipeline,
+# and the wkhtmltopdf landscape fallback uses pdfkit/pypdf, which frappe itself ships.
+dependencies = []
+
+[project.optional-dependencies]
+# Alternative engines, opt-in via site_config "lumenpdf_engine".
+playwright = ["playwright>=1.40.0"]
+gotenberg = ["requests>=2.28.0"]
+
+[build-system]
+requires = ["flit_core >=3.4,<4"]
+build-backend = "flit_core.buildapi"
+
+[tool.flit.module]
+name = "lumenpdf"
+
+[tool.bench.frappe-dependencies]
+frappe = ">=14.0.0,<17.0.0"
